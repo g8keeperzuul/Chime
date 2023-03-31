@@ -1,0 +1,5 @@
+MOSQUITTO_HOST="127.0.0.1"
+MOSQUITTO_PORT="1883"
+USR="mqtt-user"
+PWD="MY-SECRET-PASSWORD"     
+BASE_TOPIC="homeassistant/siren/featheresp32s2"

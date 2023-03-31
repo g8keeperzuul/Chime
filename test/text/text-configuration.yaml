@@ -1,0 +1,28 @@
+  # MQTT Discovery for text entities not supported in versions of HA prior to 2023!
+  # So need to define in configuration.yaml
+
+  # NOT REQUIRED with updated versions of HA, since device sends MQTT discovery message
+  
+  mqtt:
+    text:
+      - name: "featheresp32s2 display"
+        unique_id: "featheresp32s2_display"
+        icon: "mdi:image-text"
+        min: 0
+        max: 255
+        availability_topic: "homeassistant/siren/featheresp32s2/availability"
+        state_topic: "homeassistant/text/featheresp32s2/display/state"
+        value_template: "{{ value_json.text }}"
+        command_topic: "homeassistant/text/featheresp32s2/display/command"
+        command_template: "{ 'text': '{{ value }}', 'graphic': 'NONE' }"
+        optimistic: false
+        device:
+          name: "Chime"
+          identifiers: "84:F7:03:D6:8B:20"
+          mf: "Adafruit"
+          mdl: "Feather ESP32-S2 with BME280"
+          sw: "20230302.2100"
+  
+  
+  
+  
