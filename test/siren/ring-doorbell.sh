@@ -12,7 +12,7 @@ source env.sh
 
 mosquitto_pub -h $MOSQUITTO_HOST -p $MOSQUITTO_PORT -t "homeassistant/siren/featheresp32s2/command" \
 -u $USR -P $PWD \
--m "{\"state\":\"ON\", \"tone\": \"doorbell.wav\", \"volume_set\": 0.7 }"
+-m "{\"state\":\"ON\", \"tone\": \"doorbell.wav\", \"volume_set\": 1.0 }"
 
 # Supported Graphics: NONE, DOOR, RADS, FIRE, INFO, AQI, CO2, WATER, GAS, FREEZE, ALERT, SAFE, GARAGE
 mosquitto_pub -h $MOSQUITTO_HOST -p $MOSQUITTO_PORT -t "homeassistant/text/featheresp32s2/display/command" \

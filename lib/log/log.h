@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-//#define DISABLE_SERIAL_OUTPUT 1
+#define DISABLE_SERIAL_OUTPUT 1
 
 // https://arduino.stackexchange.com/questions/9857/can-i-make-the-arduino-ignore-serial-print
 #ifdef DISABLE_SERIAL_OUTPUT

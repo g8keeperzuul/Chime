@@ -706,7 +706,13 @@ void processMessages(){
           // map requested "graphic" to matching bitmap
           if(strcmp(graphic, NONE_LABEL)==0){ 
             displayMessage(1,text);
-          }          
+          }  
+          else if(strcmp(graphic, MEDIUM_TEXT_LABEL)==0){
+            displayMessage(2,text);
+          }            
+          else if(strcmp(graphic, LARGE_TEXT_LABEL)==0){
+            displayMessage(3,text);
+          }                   
           else if(strcmp(graphic, AQI_LABEL)==0){ 
             displayGraphic(text, AQI_BITMAP, AQI_WIDTH, AQI_HEIGHT);
           }
@@ -739,7 +745,7 @@ void processMessages(){
           }               
           else if(strcmp(graphic, WATER_LABEL)==0){
             displayGraphic(text, WATER_BITMAP, WATER_WIDTH, WATER_HEIGHT);
-          }                                      
+          }                                                 
           else{ // default is INFO graphic if no match found
             displayGraphic(text, INFO_BITMAP, INFO_WIDTH, INFO_HEIGHT);
             // graphic = "INFO"
@@ -894,7 +900,7 @@ void onNetworkConnect(){
   
   Sprintln("ENTER >>> onNetworkConnect()");
   Sprintln("Connected to network!");
-  print_heap();
+  //print_heap();
   //printNetworkDetails();
 
   if(!time_is_set){

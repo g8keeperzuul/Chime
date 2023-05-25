@@ -18,7 +18,10 @@
 // $ convert fire128.png XBM:FIRE.xbm
 // OR https://notisrac.github.io/FileToCArray/
 
-static const char* NONE_LABEL = "NONE";
+static const char* NONE_LABEL = "NONE";               // size 1
+static const char* MEDIUM_TEXT_LABEL = "MEDIUM_TEXT"; // size 2 (max 10 chars across, 6 lines)
+static const char* LARGE_TEXT_LABEL = "LARGE_TEXT";   // size 3 (max  7 chars across, 5 lines)
+
 
 static const char* FIRE_LABEL = "FIRE";
 

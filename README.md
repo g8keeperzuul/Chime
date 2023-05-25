@@ -18,6 +18,8 @@ _This project will detail the build of the Chime, a Home Assistant Siren impleme
 
 ![Active display](doc/active-display.jpg)
 
+![Chime enclosure](doc/chime-enclosed.jpg)
+
 ## Parts List ##
 | Component | Description |
 | -- | -- |
@@ -220,6 +222,10 @@ Once configured, the Chime should announce itself to Home Assistant without any 
     {"text": "Master bedroom carbon dioxide levels too high!", "graphic": "CO2" }
 
     {"text": "", "graphic": "NONE" } (for a blank screen)
+
+    {"text": "...", "graphic": "MEDIUM_TEXT" } (for 10 characters, 6 lines)
+
+    {"text": "...", "graphic": "LARGE_TEXT" } (for 7 characters, 5 lines)
    ```
 ## Customizing Graphics ##
 
@@ -228,7 +234,8 @@ Once configured, the Chime should announce itself to Home Assistant without any 
    ![Select icon for export](doc/icon-export.png)
    ![Edit icon](doc/icon-export2.png)
 3. Once the graphic is created and available locally, you can upload it to a [website](https://notisrac.github.io/FileToCArray/) that will create a binary array for you.
-   ![Create binary array](doc/convert-to-binary-array.png)
+
+![Create binary array](doc/convert-to-binary-array.png)
   
   The resulting output can be pasted directly into the [code](include/graphics.h).
 
@@ -298,7 +305,7 @@ This sequence illustrates how both the Doorbell project and Chime project work t
 ![Doorbell + Chime flow](doc/sequence-diagram.png)
 Generated using [PlantUML](https://www.plantuml.com/plantuml/png/rLLHRzis47xdhpYes5jZfUtQ3KONj5qoD6WJ5sqmO801WPBE4bkHLCYJFIF9Vnz9IL6apKk303Ec9_FutTrttntFRonnGusi6ECPQGFjzxkmOZY5ZrjOjrPMEnUHYPehWcEjJOfLDKRcdNK4ZTvhYV3MMc79dQCMMd9ssM23dNDqfkrb8uWql3Fw6vh8W-GbqIZMhwMGpcL2CFFM4QxMkfefgcVQ50FE6KAzOiq97GDuKecYfCBmxM0EmUxUiAv-E3YwBH3cK1kq5jB6KLR0b7Qknlimlk7V45P6Ix0LOirGvU3lRtCCOPuOp1dhZvCCX9OWvKHejhimNxLGi14hmTZrzVK8vQfrW089iiOOL0JaPVBcWt6GqRqBCsPKSWTvdHurTQLv3bzhB9PggTvVN7o2Juil5n3pMiGISy4JgnkJOLpfZ5VzeVLRgXQHQKKkLoBoNuBXe4NDut64rsSdnwTla-FJpyc7ap-EujbTXJicGl82WJGR3nYS-K1-Z3OMpQ0-A_cqyEU7Xx3ui5HNqPHSD8yUHA-t_7RwyUGekl4gxX0nzmFWY9B88ECI3Gyd_0TD7VsroD1sUgv4XN4R8FnEQawb8m-Huone6sX3r0QTzTaJgtXjIqtHKuXktJmmTkMkH15lDfkuHn_qQ3kfQAo_vz2nPu4zR0ILe703BBHba7sNwlT8r0_-Rd6ytJgDbDLcgBPpypqD25VepwzcFxdQtOKHQUESelbLj3B2KQosYUBIWwBRZVQkI_mHrrX5JvSgQfIWHAyIYTms1YKgyXu_U4M54z4VP2xcNUw3buV-nfyIkNQNBrw-yWHIhScDM1Eyd_q8DpUxnSdnRyk2jIseS4Nk6klfTWa3tkl86zAIaz1EE5TsKQ2nIsKp8seQhy2qQh1tzVksRKBTf9Mm9UJ2rXNVGgQbv2htVIYrHDu_jfZmJufNoAb4WxP-yTm-Zpkd-DRfogFcqHVdcUfy2y829w0oh4b5eKGlMM5uNOeij6En-1p13MEUa-VMxkL0pZQfhoJ5_TER_cqK1b7TVIizGv-2kMpG1Hdwvjz1yFxt3eHfVbY1mULnwkSuhd3eHycdpTWhKwVYpY4Ep7VFY1K6rPHPZnxsIBGuzxb9A_I9-sSvs_2rjwzrrKXCB8RNFJjqdEuPtdtHkdTcGnTzmEyUqlOgCFhEGWBsKMKyQ3RtGd0scpq3ALJZrpOdDCxm7wtQoIivNvoVF7wRFfx1_sfXxgZW8NEt1p9JmmXISiRUE24RMVq5)
 
-**PlantUML**
+**PlantUML for Sequence Diagram**
 ```
 @startuml
 
@@ -409,6 +416,39 @@ deactivate ha
 @enduml
 ```
 
+## Display Continuous Updates ##
+
+Rather than only show alerts or events (like a doorbell press), Chime can also be used to continuously display sensor updates.
+In this example, environmental sensors from the [AirMonitor project](https://github.com/g8keeperzuul/AirMonitor) are displayed on Chime as they are updated.
+The Chime display is updated via a message published to MQTT with the various sensor values used as parameters to the message body.
+
+```
+alias: Update Chime on Air Monitor
+description: Display Air Monitor (featherM0) status on Chime
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.featherm0_aqi
+      - sensor.featherm0_carbon_dioxide
+      - sensor.featherm0_humidity
+      - sensor.featherm0_pressure
+      - sensor.featherm0_temperature
+condition: []
+action:
+  - service: mqtt.publish
+    data:
+      qos: 0
+      retain: false
+      topic: homeassistant/text/featheresp32s2/display/command
+      payload: >-
+        { "text": "{{states('sensor.featherm0_temperature')|round(1)}}
+        C\n{{states('sensor.featherm0_humidity')|round(1)}}
+        RH%\n{{states('sensor.featherm0_pressure')|round()}} hPa\n\nCO2:
+        {{states('sensor.featherm0_carbon_dioxide')}}\nAQI:
+        {{states('sensor.featherm0_aqi')}}", "graphic": "MEDIUM_TEXT" }
+mode: single
+```
+![Chime displaying AirMonitor results](doc/display-airmonitor.jpg)
 ## Future Enhancements ##
 
 1. Automatically clear the display after a specified duration. Default would be to display forever.
