@@ -416,7 +416,7 @@ deactivate ha
 @enduml
 ```
 
-## Display Continuous Updates ##
+## Display Continuous Updates using Home Assistant Automation ##
 
 Rather than only show alerts or events (like a doorbell press), Chime can also be used to continuously display sensor updates.
 In this example, environmental sensors from the [AirMonitor project](https://github.com/g8keeperzuul/AirMonitor) are displayed on Chime as they are updated.
@@ -449,6 +449,44 @@ action:
 mode: single
 ```
 ![Chime displaying AirMonitor results](doc/display-airmonitor.jpg)
+
+## Display Continuous Updates without Home Assistant ##
+
+The Chime is a dumb device that has no sensors of its own. It takes commands to display text and graphic or play some audio and nothing more.
+The commands are provided via MQTT topics that Chime subscribes to. 
+
+In this scenario, a simple Python program acts as an intermediary. It subscribes to topics which various sensors publish their telemetry to. It then formats that data for display on Chime and publishes commands to it. 
+This way Chime can cycle through a number of different sensors displaying the latest reading from each of them in turn. 
+The Python program provides more power and flexibility than Home Assistant Automations, but it does require all data that it needs to be published to an MQTT topic. 
+
+The following Python program and accompanying optional Dockerfile provides this functionality without any need for Home Assistant at all. 
+
+   [Python program mqtt2chime.py](mqtt2chime/src/mqtt2chime.py)
+
+   Running this simple program within a Docker container is completely optional.
+   To build a docker image with mqtt2chime, simply run the script [build_docker_image.sh](mqtt2chime/src/build_docker_image.sh)
+   With the docker image built, run it with the following command:
+   ```
+   docker run -d --name mqtt2chime g8keeperzuul/mqtt2chime:latest --broker MQTT_BROKER_HOSTNAME --port 1883 --user USERNAME --pass PASSWORD -v
+   ```
+
+## Enclosure ##
+
+A small Art Deco radio inspired case was design and 3D printed. 
+The idea came from this [Art Deco weather forcast display](https://www.thingiverse.com/thing:1964380), with modifications made to support the mounting of the square screen in a circular hole. 
+
+1. [3D STL model - face](content/3d-model/Chime-face.stl)
+2. [3D STL model - enclosure](content/3d-model/Chime-Body.stl)
+3. [3D STL model - screen mount](content/3d-model/Chime%20screen%20mount.stl)
+
+![Finished - open](doc/Chime-art-deco-inside.png)
+
+Note the use of magnets to affix the face to the main enclosure.
+What is not well illustrated is the screen mount. It friction fits the display into the circular hole. In the example, it is printed with black filament so that it blends with the black display. 
+
+![Finished - closed](doc/Chime-art-deco.png)
+
+
 ## Future Enhancements ##
 
 1. Automatically clear the display after a specified duration. Default would be to display forever.
